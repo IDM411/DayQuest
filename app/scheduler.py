@@ -1,6 +1,7 @@
 from datetime import datetime, time, timedelta
 
 from .models import FixedCommitment, Goal, Obligation, ScheduledBlock, db
+from .timeutils import local_now
 
 DAY_START_HOUR = 8
 DAY_END_HOUR = 22
@@ -137,7 +138,7 @@ def compute_cadence(goal, now=None):
         => four ~45-minute sessions a week. (Fewer/longer sessions only if the
         weekly load is smaller; the load itself is fixed by effort and time.)
     """
-    now = now or datetime.utcnow()
+    now = now or local_now()
     remaining = max(goal.total_effort_minutes - goal.time_logged_minutes, 0)
     days_until = max((goal.soft_target_date - now).total_seconds() / 86400, 1.0)
     weeks_until = days_until / 7
@@ -168,7 +169,7 @@ def pace_status(goal, now=None, tolerance=0.05):
     "ahead" means it will have loosened. The cadence is the actionable number;
     this is the human-readable label that goes with it.
     """
-    now = now or datetime.utcnow()
+    now = now or local_now()
     total_window = (goal.soft_target_date - goal.created_at).total_seconds()
     if total_window <= 0:
         return "on_pace"
@@ -234,7 +235,7 @@ def _fill_gaps(gaps, reserved):
 
 def run_scheduler(now=None):
     """Full re-run: locks fixed commitments, then fills every open gap by urgency (Section 9, steps 1-4)."""
-    now = now or datetime.utcnow()
+    now = now or local_now()
     horizon_end = now + timedelta(days=HORIZON_DAYS)
 
     ScheduledBlock.query.filter(
@@ -260,7 +261,7 @@ def run_scheduler(now=None):
 
 def push_block(block_id, push_minutes=DEFAULT_PUSH_MINUTES, now=None):
     """Push: move the block to the next free slot at least push_minutes later, then refill the remainder of the day around it (Section 9, step 5)."""
-    now = now or datetime.utcnow()
+    now = now or local_now()
     block = ScheduledBlock.query.get(block_id)
     if block is None:
         raise ValueError(f"no scheduled block with id {block_id}")
@@ -307,7 +308,7 @@ def push_block(block_id, push_minutes=DEFAULT_PUSH_MINUTES, now=None):
 
 def mark_done(block_id, actual_minutes=None, now=None):
     """Mark done: log actual time against the obligation, then fully re-run the scheduler."""
-    now = now or datetime.utcnow()
+    now = now or local_now()
     block = ScheduledBlock.query.get(block_id)
     if block is None:
         raise ValueError(f"no scheduled block with id {block_id}")
@@ -338,7 +339,7 @@ def get_right_now(now=None):
     Considers obligations and goals alike - whichever the urgency-ranked
     gap-fill placed in the earliest current slot wins the screen.
     """
-    now = now or datetime.utcnow()
+    now = now or local_now()
     return (
         ScheduledBlock.query.filter(
             ScheduledBlock.ref_type.in_(SCHEDULABLE_REF_TYPES),

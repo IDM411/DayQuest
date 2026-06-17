@@ -1,6 +1,6 @@
-from datetime import datetime
-
 from flask_sqlalchemy import SQLAlchemy
+
+from .timeutils import local_now
 
 db = SQLAlchemy()
 
@@ -15,7 +15,7 @@ class FixedCommitment(db.Model):
     specific_date = db.Column(db.Date, nullable=True)  # set when not recurring
     start_time = db.Column(db.Time, nullable=False)
     end_time = db.Column(db.Time, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=local_now)
 
 
 class Obligation(db.Model):
@@ -29,7 +29,7 @@ class Obligation(db.Model):
     time_logged_minutes = db.Column(db.Integer, nullable=False, default=0)
     status = db.Column(db.String(20), nullable=False, default="pending")  # pending|done
     source = db.Column(db.String(200), nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=local_now)
 
     @property
     def total_effort_minutes(self):
@@ -46,7 +46,7 @@ class Goal(db.Model):
     soft_target_date = db.Column(db.DateTime, nullable=False)
     time_logged_minutes = db.Column(db.Integer, nullable=False, default=0)
     status = db.Column(db.String(20), nullable=False, default="active")  # active|done|abandoned
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, nullable=False, default=local_now)
 
     @property
     def total_effort_minutes(self):
