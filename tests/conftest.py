@@ -4,7 +4,7 @@ import tempfile
 import pytest
 
 from app import create_app
-from app.models import FixedCommitment, Obligation, db
+from app.models import FixedCommitment, Goal, Obligation, db
 
 
 @pytest.fixture
@@ -44,6 +44,25 @@ def make_obligation(app):
         db.session.add(obligation)
         db.session.commit()
         return obligation
+
+    return _make
+
+
+@pytest.fixture
+def make_goal(app):
+    def _make(title, soft_target_date, total_effort_minutes, time_logged=0, status="active", created_at=None):
+        goal = Goal(
+            title=title,
+            estimated_total_effort_minutes=total_effort_minutes,
+            soft_target_date=soft_target_date,
+            time_logged_minutes=time_logged,
+            status=status,
+        )
+        if created_at is not None:
+            goal.created_at = created_at
+        db.session.add(goal)
+        db.session.commit()
+        return goal
 
     return _make
 
