@@ -167,5 +167,43 @@ goalForm.addEventListener("submit", (e) => {
   );
 });
 
+// ---- Primary free-text capture ------------------------------------------
+
+const captureForm = document.getElementById("capture-form");
+const captureInput = document.getElementById("capture-input");
+const captureMsg = document.getElementById("capture-msg");
+const captureBtn = captureForm.querySelector("button");
+
+captureForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = captureInput.value.trim();
+  if (!text) return;
+
+  captureBtn.disabled = true;
+  captureMsg.classList.remove("error");
+  captureMsg.textContent = "Reading that…";
+  captureMsg.hidden = false;
+
+  try {
+    const res = await fetch("/api/capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    captureInput.value = "";
+    captureMsg.textContent = data.summary || "Added.";
+    captureMsg.classList.remove("error");
+    // The capture re-runs the scheduler; refresh in case it now outranks.
+    fetchRightNow();
+  } catch (err) {
+    captureMsg.textContent = "Couldn't parse that. Try the manual forms below.";
+    captureMsg.classList.add("error");
+  } finally {
+    captureBtn.disabled = false;
+  }
+});
+
 // Initial load.
 fetchRightNow();

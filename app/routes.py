@@ -2,7 +2,8 @@ from datetime import date, datetime, time
 
 from flask import Blueprint, abort, jsonify, request
 
-from . import scheduler
+from . import capture as capture_service
+from . import scheduler, services
 from .models import FixedCommitment, Goal, Obligation, ScheduledBlock, db
 
 bp = Blueprint("api", __name__, url_prefix="/api")
@@ -92,7 +93,7 @@ def commitments():
     if request.method == "POST":
         data = request.get_json(force=True)
         recurring = bool(data.get("recurring", False))
-        commitment = FixedCommitment(
+        commitment = services.create_fixed_commitment(
             title=data["title"],
             recurring=recurring,
             day_of_week=data.get("day_of_week") if recurring else None,
@@ -100,9 +101,6 @@ def commitments():
             start_time=time.fromisoformat(data["start_time"]),
             end_time=time.fromisoformat(data["end_time"]),
         )
-        db.session.add(commitment)
-        db.session.commit()
-        scheduler.run_scheduler()
         return jsonify(_serialize_commitment(commitment)), 201
 
     return jsonify([_serialize_commitment(c) for c in FixedCommitment.query.all()])
@@ -112,16 +110,13 @@ def commitments():
 def obligations():
     if request.method == "POST":
         data = request.get_json(force=True)
-        obligation = Obligation(
+        obligation = services.create_obligation(
             title=data["title"],
             first_step=data["first_step"],
             deadline=datetime.fromisoformat(data["deadline"]),
             estimated_effort_minutes=int(data["estimated_effort_minutes"]),
             source=data.get("source"),
         )
-        db.session.add(obligation)
-        db.session.commit()
-        scheduler.run_scheduler()
         return jsonify(_serialize_obligation(obligation)), 201
 
     return jsonify([_serialize_obligation(o) for o in Obligation.query.all()])
@@ -131,14 +126,11 @@ def obligations():
 def goals():
     if request.method == "POST":
         data = request.get_json(force=True)
-        goal = Goal(
+        goal = services.create_goal(
             title=data["title"],
             estimated_total_effort_minutes=int(data["estimated_total_effort_minutes"]),
             soft_target_date=_parse_target_datetime(data["soft_target_date"]),
         )
-        db.session.add(goal)
-        db.session.commit()
-        scheduler.run_scheduler()
         return jsonify(_serialize_goal(goal)), 201
 
     return jsonify([_serialize_goal(g) for g in Goal.query.all()])
@@ -148,6 +140,25 @@ def goals():
 # /schedule/<block_id>/push and /schedule/<block_id>/done routes below - they
 # operate on a block id and delegate to the scheduler, which now handles goal
 # blocks identically to obligation blocks. No goal-specific push/done routes.
+
+
+@bp.route("/capture", methods=["POST"])
+def capture():
+    """Free-text capture: raw text in, one parsed-and-created record out.
+
+    Parses with the LLM, applies defaults (never blocks on missing info), creates
+    the matching record via the same services the forms use, and returns a brief
+    confirmation of what it understood.
+    """
+    data = request.get_json(force=True)
+    text = (data.get("text") or "").strip()
+    if not text:
+        abort(400, description="empty capture text")
+    try:
+        result = capture_service.capture(text)
+    except capture_service.CaptureError as exc:
+        abort(502, description=str(exc))
+    return jsonify(result), 201
 
 
 @bp.route("/schedule/right-now", methods=["GET"])

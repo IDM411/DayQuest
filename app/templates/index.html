@@ -13,9 +13,17 @@
     <main>
       <!-- Right Now: the single focus of the page -->
       <section id="right-now" aria-live="polite">
-        <p class="eyebrow">Right Now</p>
+        <div class="eyebrow-row">
+          <span class="eyebrow-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1" />
+            </svg>
+          </span>
+          <p class="eyebrow">Right Now</p>
+        </div>
 
-        <div id="rn-task" hidden>
+        <div id="rn-task" class="rn-card" hidden>
           <h1 id="rn-title"></h1>
           <p id="rn-first-step" class="first-step"></p>
           <p id="rn-time" class="time-range"></p>
@@ -26,19 +34,49 @@
           <p id="rn-error" class="error" hidden></p>
         </div>
 
-        <div id="rn-empty" hidden>
+        <div id="rn-empty" class="rn-card rn-card--empty" hidden>
           <h1 class="muted">Nothing scheduled right now.</h1>
           <p class="muted">You're clear. Add something below, or take a break.</p>
         </div>
       </section>
 
-      <!-- Secondary: collapsed input forms -->
+      <!-- Primary capture: one free-text box that figures out the rest -->
+      <form id="capture-form" class="add-form form-capture">
+        <div class="form-head">
+          <span class="form-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v18M3 12h18" />
+            </svg>
+          </span>
+          <h2>Got something new? Type it in.</h2>
+        </div>
+        <input
+          id="capture-input"
+          name="text"
+          type="text"
+          placeholder="e.g. report due thursday"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="primary">Add</button>
+        <p id="capture-msg" class="form-msg" hidden></p>
+      </form>
+
+      <!-- Fallback: manual forms, in case parsing gets something wrong -->
       <details id="add-panel">
-        <summary>Add a commitment, obligation, or goal</summary>
+        <summary>Add manually (advanced)</summary>
 
         <div class="forms">
-          <form id="commitment-form" class="add-form">
-            <h2>Fixed Commitment</h2>
+          <form id="commitment-form" class="add-form form-commitment">
+            <div class="form-head">
+              <span class="form-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+              </span>
+              <h2>Fixed Commitment</h2>
+            </div>
             <label>
               Title
               <input name="title" type="text" required />
@@ -69,8 +107,16 @@
             <p class="form-msg" hidden></p>
           </form>
 
-          <form id="obligation-form" class="add-form">
-            <h2>Obligation</h2>
+          <form id="obligation-form" class="add-form form-obligation">
+            <div class="form-head">
+              <span class="form-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 3v18" />
+                  <path d="M4 4h13l-2 4 2 4H4" />
+                </svg>
+              </span>
+              <h2>Obligation</h2>
+            </div>
             <label>
               Title
               <input name="title" type="text" required />
@@ -91,8 +137,17 @@
             <p class="form-msg" hidden></p>
           </form>
 
-          <form id="goal-form" class="add-form">
-            <h2>Goal</h2>
+          <form id="goal-form" class="add-form form-goal">
+            <div class="form-head">
+              <span class="form-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <circle cx="12" cy="12" r="5" />
+                  <circle cx="12" cy="12" r="1" />
+                </svg>
+              </span>
+              <h2>Goal</h2>
+            </div>
             <label>
               Title
               <input name="title" type="text" required />
