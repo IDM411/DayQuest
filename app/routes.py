@@ -3,9 +3,20 @@ from datetime import date, datetime, time
 from flask import Blueprint, abort, jsonify, request
 
 from . import scheduler
-from .models import FixedCommitment, Obligation, ScheduledBlock, db
+from .models import FixedCommitment, Goal, Obligation, ScheduledBlock, db
 
 bp = Blueprint("api", __name__, url_prefix="/api")
+
+
+def _parse_target_datetime(value):
+    """Accept a plain date ('YYYY-MM-DD') or a full ISO datetime for a goal's soft target.
+
+    A bare date is anchored to the end of the working day so urgency math has a
+    concrete moment to race toward.
+    """
+    if len(value) == 10:
+        return datetime.combine(date.fromisoformat(value), time(hour=scheduler.DAY_END_HOUR))
+    return datetime.fromisoformat(value)
 
 
 def _serialize_commitment(c):
@@ -33,6 +44,21 @@ def _serialize_obligation(o):
     }
 
 
+def _serialize_goal(g):
+    return {
+        "id": g.id,
+        "title": g.title,
+        "estimated_total_effort_minutes": g.estimated_total_effort_minutes,
+        "soft_target_date": g.soft_target_date.isoformat(),
+        "time_logged_minutes": g.time_logged_minutes,
+        "status": g.status,
+        # Cadence and pace are derived from current state on every read, so they
+        # reflect the self-correcting estimate without being stored.
+        "cadence": scheduler.compute_cadence(g),
+        "pace": scheduler.pace_status(g),
+    }
+
+
 def _serialize_block(b):
     if b is None:
         return None
@@ -41,6 +67,10 @@ def _serialize_block(b):
         o = Obligation.query.get(b.ref_id)
         if o:
             title, first_step = o.title, o.first_step
+    elif b.ref_type == "goal":
+        g = Goal.query.get(b.ref_id)
+        if g:
+            title = g.title
     elif b.ref_type == "fixed":
         c = FixedCommitment.query.get(b.ref_id)
         if c:
@@ -95,6 +125,29 @@ def obligations():
         return jsonify(_serialize_obligation(obligation)), 201
 
     return jsonify([_serialize_obligation(o) for o in Obligation.query.all()])
+
+
+@bp.route("/goals", methods=["GET", "POST"])
+def goals():
+    if request.method == "POST":
+        data = request.get_json(force=True)
+        goal = Goal(
+            title=data["title"],
+            estimated_total_effort_minutes=int(data["estimated_total_effort_minutes"]),
+            soft_target_date=_parse_target_datetime(data["soft_target_date"]),
+        )
+        db.session.add(goal)
+        db.session.commit()
+        scheduler.run_scheduler()
+        return jsonify(_serialize_goal(goal)), 201
+
+    return jsonify([_serialize_goal(g) for g in Goal.query.all()])
+
+
+# Note: goal-related scheduled blocks reuse the existing
+# /schedule/<block_id>/push and /schedule/<block_id>/done routes below - they
+# operate on a block id and delegate to the scheduler, which now handles goal
+# blocks identically to obligation blocks. No goal-specific push/done routes.
 
 
 @bp.route("/schedule/right-now", methods=["GET"])
