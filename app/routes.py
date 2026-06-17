@@ -1,0 +1,130 @@
+from datetime import date, datetime, time
+
+from flask import Blueprint, abort, jsonify, request
+
+from . import scheduler
+from .models import FixedCommitment, Obligation, ScheduledBlock, db
+
+bp = Blueprint("api", __name__, url_prefix="/api")
+
+
+def _serialize_commitment(c):
+    return {
+        "id": c.id,
+        "title": c.title,
+        "recurring": c.recurring,
+        "day_of_week": c.day_of_week,
+        "specific_date": c.specific_date.isoformat() if c.specific_date else None,
+        "start_time": c.start_time.isoformat(),
+        "end_time": c.end_time.isoformat(),
+    }
+
+
+def _serialize_obligation(o):
+    return {
+        "id": o.id,
+        "title": o.title,
+        "first_step": o.first_step,
+        "deadline": o.deadline.isoformat(),
+        "estimated_effort_minutes": o.estimated_effort_minutes,
+        "time_logged_minutes": o.time_logged_minutes,
+        "status": o.status,
+        "source": o.source,
+    }
+
+
+def _serialize_block(b):
+    if b is None:
+        return None
+    title, first_step = None, None
+    if b.ref_type == "obligation":
+        o = Obligation.query.get(b.ref_id)
+        if o:
+            title, first_step = o.title, o.first_step
+    elif b.ref_type == "fixed":
+        c = FixedCommitment.query.get(b.ref_id)
+        if c:
+            title = c.title
+    return {
+        "id": b.id,
+        "ref_type": b.ref_type,
+        "ref_id": b.ref_id,
+        "title": title,
+        "first_step": first_step,
+        "start_time": b.start_time.isoformat(),
+        "end_time": b.end_time.isoformat(),
+        "status": b.status,
+    }
+
+
+@bp.route("/commitments", methods=["GET", "POST"])
+def commitments():
+    if request.method == "POST":
+        data = request.get_json(force=True)
+        recurring = bool(data.get("recurring", False))
+        commitment = FixedCommitment(
+            title=data["title"],
+            recurring=recurring,
+            day_of_week=data.get("day_of_week") if recurring else None,
+            specific_date=date.fromisoformat(data["specific_date"]) if not recurring else None,
+            start_time=time.fromisoformat(data["start_time"]),
+            end_time=time.fromisoformat(data["end_time"]),
+        )
+        db.session.add(commitment)
+        db.session.commit()
+        scheduler.run_scheduler()
+        return jsonify(_serialize_commitment(commitment)), 201
+
+    return jsonify([_serialize_commitment(c) for c in FixedCommitment.query.all()])
+
+
+@bp.route("/obligations", methods=["GET", "POST"])
+def obligations():
+    if request.method == "POST":
+        data = request.get_json(force=True)
+        obligation = Obligation(
+            title=data["title"],
+            first_step=data["first_step"],
+            deadline=datetime.fromisoformat(data["deadline"]),
+            estimated_effort_minutes=int(data["estimated_effort_minutes"]),
+            source=data.get("source"),
+        )
+        db.session.add(obligation)
+        db.session.commit()
+        scheduler.run_scheduler()
+        return jsonify(_serialize_obligation(obligation)), 201
+
+    return jsonify([_serialize_obligation(o) for o in Obligation.query.all()])
+
+
+@bp.route("/schedule/right-now", methods=["GET"])
+def right_now():
+    return jsonify(_serialize_block(scheduler.get_right_now()))
+
+
+@bp.route("/schedule/run", methods=["POST"])
+def run_schedule():
+    blocks = scheduler.run_scheduler()
+    return jsonify([_serialize_block(b) for b in blocks])
+
+
+@bp.route("/schedule/<int:block_id>/push", methods=["POST"])
+def push(block_id):
+    data = request.get_json(silent=True) or {}
+    minutes = int(data.get("minutes", scheduler.DEFAULT_PUSH_MINUTES))
+    try:
+        scheduler.push_block(block_id, push_minutes=minutes)
+    except ValueError as exc:
+        abort(400, description=str(exc))
+    return jsonify(_serialize_block(scheduler.get_right_now()))
+
+
+@bp.route("/schedule/<int:block_id>/done", methods=["POST"])
+def done(block_id):
+    data = request.get_json(silent=True) or {}
+    actual_minutes = data.get("actual_minutes")
+    try:
+        scheduler.mark_done(block_id, actual_minutes=actual_minutes)
+    except ValueError as exc:
+        abort(400, description=str(exc))
+    return jsonify(_serialize_block(scheduler.get_right_now()))
