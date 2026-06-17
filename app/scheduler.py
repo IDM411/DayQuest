@@ -150,7 +150,7 @@ def run_scheduler(now=None):
 
 
 def push_block(block_id, push_minutes=DEFAULT_PUSH_MINUTES, now=None):
-    """Push: shift the block later, cascade same-day obligation blocks, refill the remainder of the day (Section 9, step 5)."""
+    """Push: move the block to the next free slot at least push_minutes later, then refill the remainder of the day around it (Section 9, step 5)."""
     now = now or datetime.utcnow()
     block = ScheduledBlock.query.get(block_id)
     if block is None:
@@ -158,19 +158,23 @@ def push_block(block_id, push_minutes=DEFAULT_PUSH_MINUTES, now=None):
     if block.ref_type != "obligation":
         raise ValueError("only obligation blocks can be pushed")
 
-    delta = timedelta(minutes=push_minutes)
+    duration = block.end_time - block.start_time
+    earliest_start = block.start_time + timedelta(minutes=push_minutes)
     day_end = datetime.combine(block.start_time.date(), time(hour=DAY_END_HOUR))
 
-    rest_of_day = ScheduledBlock.query.filter(
-        ScheduledBlock.ref_type == "obligation",
-        ScheduledBlock.status == "planned",
-        ScheduledBlock.start_time >= block.start_time,
-        ScheduledBlock.start_time < day_end,
-    ).all()
-    for b in rest_of_day:
-        b.start_time += delta
-        b.end_time += delta
+    # The new slot must clear every other locked interval (fixed commitments,
+    # other already-pushed/active blocks) - a flat "+= delta" offset can land
+    # straight on top of a block that was pushed independently elsewhere.
+    target_fixed = _fixed_occurrences(earliest_start, day_end)
+    target_busy = [(s, e) for _, s, e in target_fixed] + _locked_blocks(earliest_start, day_end)
+    target_gaps = _free_gaps(earliest_start, day_end, target_busy)
+    new_start = next((g_start for g_start, g_end in target_gaps if g_end - g_start >= duration), None)
+    if new_start is None:
+        # No slot big enough remains today - best effort; the next full re-run reconciles it.
+        new_start = max(day_end - duration, earliest_start)
 
+    block.start_time = new_start
+    block.end_time = new_start + duration
     block.status = "pushed"
     db.session.flush()
 
