@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DayQuest — Right Now</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <main>
+      <!-- Right Now: the single focus of the page -->
+      <section id="right-now" aria-live="polite">
+        <p class="eyebrow">Right Now</p>
+
+        <div id="rn-task" hidden>
+          <h1 id="rn-title"></h1>
+          <p id="rn-first-step" class="first-step"></p>
+          <p id="rn-time" class="time-range"></p>
+          <div class="actions">
+            <button id="done-btn" type="button" class="primary">Done</button>
+            <button id="push-btn" type="button" class="ghost">Push</button>
+          </div>
+          <p id="rn-error" class="error" hidden></p>
+        </div>
+
+        <div id="rn-empty" hidden>
+          <h1 class="muted">Nothing scheduled right now.</h1>
+          <p class="muted">You're clear. Add something below, or take a break.</p>
+        </div>
+      </section>
+
+      <!-- Secondary: collapsed input forms -->
+      <details id="add-panel">
+        <summary>Add a commitment or obligation</summary>
+
+        <div class="forms">
+          <form id="commitment-form" class="add-form">
+            <h2>Fixed Commitment</h2>
+            <label>
+              Title
+              <input name="title" type="text" required />
+            </label>
+            <label>
+              Day of week
+              <select name="day_of_week" required>
+                <option value="0">Monday</option>
+                <option value="1">Tuesday</option>
+                <option value="2">Wednesday</option>
+                <option value="3">Thursday</option>
+                <option value="4">Friday</option>
+                <option value="5">Saturday</option>
+                <option value="6">Sunday</option>
+              </select>
+            </label>
+            <div class="row">
+              <label>
+                Start
+                <input name="start_time" type="time" required />
+              </label>
+              <label>
+                End
+                <input name="end_time" type="time" required />
+              </label>
+            </div>
+            <button type="submit" class="ghost">Add commitment</button>
+            <p class="form-msg" hidden></p>
+          </form>
+
+          <form id="obligation-form" class="add-form">
+            <h2>Obligation</h2>
+            <label>
+              Title
+              <input name="title" type="text" required />
+            </label>
+            <label>
+              First step
+              <input name="first_step" type="text" required />
+            </label>
+            <label>
+              Deadline
+              <input name="deadline" type="datetime-local" required />
+            </label>
+            <label>
+              Estimated effort (minutes)
+              <input name="estimated_effort_minutes" type="number" min="1" required />
+            </label>
+            <button type="submit" class="ghost">Add obligation</button>
+            <p class="form-msg" hidden></p>
+          </form>
+        </div>
+      </details>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

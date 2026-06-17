@@ -14,7 +14,9 @@ def create_app(config_object="config.Config"):
     migrate.init_app(app, db)
 
     from .routes import bp as api_bp
+    from .views import bp as views_bp
 
     app.register_blueprint(api_bp)
+    app.register_blueprint(views_bp)
 
     return app
