@@ -148,5 +148,24 @@ obligationForm.addEventListener("submit", (e) => {
   );
 });
 
+const goalForm = document.getElementById("goal-form");
+goalForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const data = new FormData(goalForm);
+  // Effort is entered in hours (natural for "how much work is this?") and
+  // converted to the minutes the API expects.
+  const hours = Number(data.get("estimated_total_effort_hours"));
+  submitJson(
+    goalForm,
+    "/api/goals",
+    {
+      title: data.get("title"),
+      estimated_total_effort_minutes: Math.round(hours * 60),
+      soft_target_date: data.get("soft_target_date"),
+    },
+    "Goal added."
+  );
+});
+
 // Initial load.
 fetchRightNow();

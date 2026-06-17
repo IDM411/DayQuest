@@ -34,7 +34,7 @@
 
       <!-- Secondary: collapsed input forms -->
       <details id="add-panel">
-        <summary>Add a commitment or obligation</summary>
+        <summary>Add a commitment, obligation, or goal</summary>
 
         <div class="forms">
           <form id="commitment-form" class="add-form">
@@ -88,6 +88,24 @@
               <input name="estimated_effort_minutes" type="number" min="1" required />
             </label>
             <button type="submit" class="ghost">Add obligation</button>
+            <p class="form-msg" hidden></p>
+          </form>
+
+          <form id="goal-form" class="add-form">
+            <h2>Goal</h2>
+            <label>
+              Title
+              <input name="title" type="text" required />
+            </label>
+            <label>
+              Estimated total effort (hours)
+              <input name="estimated_total_effort_hours" type="number" min="0.25" step="0.25" required />
+            </label>
+            <label>
+              Target date
+              <input name="soft_target_date" type="date" required />
+            </label>
+            <button type="submit" class="ghost">Add goal</button>
             <p class="form-msg" hidden></p>
           </form>
         </div>
