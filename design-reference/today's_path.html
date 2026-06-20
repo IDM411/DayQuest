@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DayQuest - Today's Path</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Hanken+Grotesk:wght@400;600;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#af9e00",
+                        "outline": "#948e9d",
+                        "on-surface": "#e6e0ea",
+                        "tertiary-fixed": "#f8e454",
+                        "surface-variant": "#36343b",
+                        "surface-container-lowest": "#0f0d14",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e8ddff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary-fixed-dim": "#dbc839",
+                        "surface-container-high": "#2b2930",
+                        "secondary-container": "#3131c0",
+                        "primary-fixed-dim": "#cebdff",
+                        "on-surface-variant": "#cac4d4",
+                        "surface-container-low": "#1d1a21",
+                        "on-background": "#e6e0ea",
+                        "tertiary": "#dbc839",
+                        "on-tertiary-container": "#3b3500",
+                        "on-primary-container": "#3c1989",
+                        "surface-container": "#211e25",
+                        "secondary": "#c0c1ff",
+                        "on-primary-fixed": "#21005e",
+                        "primary": "#cebdff",
+                        "surface-container-highest": "#36343b",
+                        "on-tertiary": "#373100",
+                        "inverse-on-surface": "#322f37",
+                        "surface-bright": "#3b383f",
+                        "on-primary-fixed-variant": "#4f319c",
+                        "surface-dim": "#141219",
+                        "on-secondary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#494552",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#cebdff",
+                        "inverse-surface": "#e6e0ea",
+                        "on-tertiary-fixed-variant": "#504700",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#07006c",
+                        "on-primary": "#381385",
+                        "surface": "#141219",
+                        "primary-container": "#a78bfa",
+                        "on-secondary-container": "#b0b2ff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#674bb5",
+                        "background": "#141219"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "unit": "4px",
+                        "tile-gap": "16px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Manrope"],
+                        "headline-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(206, 189, 255, 0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(206, 189, 255, 0.4);
+        }
+
+        /* Glassmorphism utility */
+        .glass-panel {
+            background: rgba(26, 22, 37, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        
+        .active-glow {
+            box-shadow: 0 0 40px rgba(206, 189, 255, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-[#0d0b14] text-on-surface min-h-screen flex flex-col font-body-md overflow-x-hidden selection:bg-primary/30">
+<!-- Ambient Background Glows -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-secondary/5 blur-[150px]"></div>
+</div>
+<!-- TopNavBar (Web & Mobile Hybrid) -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/40 backdrop-blur-xl border-b-2 border-t-2 border-l-2 border-primary/20 shadow-[0_20px_40px_rgba(0,0,0,0.6)]">
+<div class="flex justify-between items-center h-20 px-margin w-full max-w-none">
+<!-- Brand -->
+<div class="flex items-center gap-3">
+<span class="font-display-lg text-display-lg font-extrabold text-primary tracking-tight">DayQuest</span>
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="text-primary dark:text-primary cursor-pointer active:scale-95 transition-transform hover:bg-surface-variant/50 duration-300 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="local_fire_department">local_fire_department</span>
+</button>
+<button class="text-primary dark:text-primary cursor-pointer active:scale-95 transition-transform hover:bg-surface-variant/50 duration-300 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="emoji_events">emoji_events</span>
+</button>
+<button class="text-primary dark:text-primary cursor-pointer active:scale-95 transition-transform hover:bg-surface-variant/50 duration-300 p-2 rounded-full flex items-center justify-center relative">
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-primary/30 ml-2">
+<img alt="Celestial Mascot Avatar" class="w-full h-full object-cover" data-alt="A detailed digital illustration of a mystical, celestial owl mascot with glowing amber eyes and subtle translucent ethereal horns. It is set against a dark nebula background with soft lavender and indigo hues. The lighting highlights its wise, calm demeanor, fitting a late-night focus sanctuary aesthetic. High quality, sharp focus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9moDRH-FI19tQrXIBOVwdfexk5q3lHdBb70XINskTDqDByMXp3uWJBMRgNOavARKmLRkDG8Snr5_RsCYPbHsSdS3PR5SnNchZBrvE_R75GxFbt_GZ58_W3gBIxh8WTdhUmKBmrAK0EPX-bcXO5d9Uo071EBj8dW5mIna3LmqF-ERMgN4ZxtllL19cTi_ReMJnmz2BFeSKQnZeLRz-NL0Ti0JAEOof6q5BdprSEPST_4GRMnrLlzVOi1rtnTTv_7Bdc996I8HojB4"/>
+</div>
+</div>
+</div>
+</header>
+<!-- SideNavBar (Web Only) -->
+<nav class="hidden md:flex flex-col py-margin gap-tile-gap fixed left-0 top-0 h-full w-64 z-40 border-r border-outline-variant/10 bg-surface/80 backdrop-blur-md shadow-2xl pt-28">
+<!-- User Info -->
+<div class="px-margin mb-6 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary">
+<img alt="User Mascot Avatar" class="w-full h-full object-cover" data-alt="A highly detailed digital rendering of a serene celestial creature avatar. The creature has soft glowing features, sharp amber eyes, and hints of starry mist surrounding it. The background is a deep space void with subtle purple auroras. The mood is tranquil and intelligent, embodying the 'Wise Companion' persona. Professional illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSEMRlSjxfROUdwoJuhBgD-_MfD2nBpb2M4ey0t4qoadNF8XaUw7OFbl9i5l2G3046GhSBwCl0fku48GdcoaYKLvtNdjNLjHAbzzjgSgBBDDIIKUjLDNkNW4-C3NI8Q6_EPmxhXWqS9kJDj553-74GmtYLlcMrFHshqHTi0G26jxVICvTJisfHZT42h6gI57G90KT-sx-WSlFVTOiSNr0Mk91VVdrGIQpqT6WX_Az37nSw7hlV7VU7frJ4rjARkavPv2NQfpKXWOk"/>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Level 24</h3>
+<p class="font-label-sm text-label-sm uppercase tracking-widest text-outline">Stargazer</p>
+</div>
+</div>
+<!-- Links -->
+<div class="flex flex-col gap-2 px-4">
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Dashboard</span>
+</a>
+<a class="text-primary bg-primary/10 rounded-xl font-bold flex items-center gap-unit px-4 py-3 border-l-2 border-primary hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined mr-3 filled text-primary" data-icon="timer">timer</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary">Focus</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="military_tech">military_tech</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Quests</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Archive</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200 rounded-xl" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest">Settings</span>
+</a>
+</div>
+<div class="mt-auto px-4 pb-4">
+<button class="w-full py-3 rounded-xl bg-gradient-to-br from-primary to-primary-fixed-dim text-surface-container-lowest font-body-md font-bold shadow-[0_10px_20px_rgba(206,189,255,0.2)] hover:shadow-[0_15px_25px_rgba(206,189,255,0.3)] transition-all active:scale-95 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="add_task">add_task</span>
+                Capture Task
+            </button>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 w-full md:pl-64 pt-24 pb-32 md:pb-12 z-10 relative">
+<div class="max-w-4xl mx-auto px-margin w-full">
+<!-- Page Header -->
+<div class="mb-10 mt-4">
+<h1 class="font-display-lg text-display-lg text-primary mb-2">Today's Path</h1>
+<p class="font-body-lg text-body-lg text-outline-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_month">calendar_month</span>
+                    Thursday, October 26th
+                </p>
+</div>
+<!-- Timeline Container -->
+<div class="relative pl-6 md:pl-8 before:content-[''] before:absolute before:left-[11px] md:before:left-[15px] before:top-4 before:bottom-0 before:w-0.5 before:bg-outline-variant/20">
+<!-- Completed Item -->
+<div class="relative mb-12 group opacity-50 transition-opacity hover:opacity-70">
+<!-- Timeline Node -->
+<div class="absolute -left-[30px] md:-left-[35px] top-4 w-[22px] h-[22px] rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10 transition-colors group-hover:border-primary/50">
+<span class="material-symbols-outlined text-[14px] text-outline-variant" data-icon="check">check</span>
+</div>
+<div class="flex flex-col md:flex-row md:items-start gap-2 md:gap-6">
+<div class="w-24 shrink-0 pt-3">
+<span class="font-label-sm text-label-sm text-outline-variant">07:00 AM</span>
+</div>
+<div class="flex-1">
+<h3 class="font-headline-sm text-headline-sm text-outline-variant line-through decoration-outline-variant/50">Morning Routine</h3>
+<p class="font-body-md text-body-md text-outline-variant/80 mt-1 line-through decoration-outline-variant/30">Meditation &amp; reading</p>
+</div>
+</div>
+</div>
+<!-- Active Item (NOW) -->
+<div class="relative mb-12 group">
+<!-- Active Timeline Node Glow -->
+<div class="absolute -left-[35px] md:-left-[40px] top-3.5 w-[32px] h-[32px] rounded-full bg-primary/20 blur-md z-0"></div>
+<!-- Timeline Node -->
+<div class="absolute -left-[30px] md:-left-[35px] top-4 w-[22px] h-[22px] rounded-full bg-primary border-4 border-surface z-10 shadow-[0_0_15px_rgba(206,189,255,0.6)]"></div>
+<div class="flex flex-col md:flex-row md:items-start gap-3 md:gap-6">
+<div class="w-24 shrink-0 pt-4 flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-primary font-bold">10:00 AM</span>
+<span class="font-label-sm text-label-sm text-outline px-2 py-0.5 bg-surface-variant/50 rounded-md self-start">2 hrs</span>
+</div>
+<div class="flex-1 glass-panel active-glow rounded-2xl border-t-2 border-l-2 border-primary border-b border-r border-white/5 p-6 relative overflow-hidden transition-all duration-300 hover:shadow-[0_25px_50px_rgba(0,0,0,0.8)]">
+<!-- Background gradient subtle -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-headline-md text-headline-md text-on-surface">Study Block</h3>
+<span class="px-3 py-1 rounded-full bg-primary/20 text-primary font-label-sm text-label-sm tracking-widest uppercase border border-primary/30 flex items-center gap-1.5 animate-pulse">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                                        NOW
+                                    </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 leading-relaxed">
+                                    Deep dive into Advanced Reactor Patterns. Focus on Chapter 4 and complete the practice exercises. Keep the ambient noise on.
+                                </p>
+<div class="flex flex-wrap gap-4 items-center mt-4">
+<button class="bg-gradient-to-r from-primary to-primary-fixed-dim text-surface-container-lowest font-body-md font-bold px-6 py-2.5 rounded-full shadow-[0_10px_20px_rgba(206,189,255,0.2)] hover:shadow-[0_15px_25px_rgba(206,189,255,0.4)] transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="play_arrow">play_arrow</span>
+                                        Start Focus Session
+                                    </button>
+<button class="px-4 py-2.5 rounded-full border border-primary/30 text-primary font-body-md hover:bg-primary/10 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="edit">edit</span>
+                                        Edit
+                                    </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Upcoming Item 1 -->
+<div class="relative mb-12 group transition-all">
+<!-- Timeline Node -->
+<div class="absolute -left-[28px] md:-left-[33px] top-4 w-[18px] h-[18px] rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10 transition-colors group-hover:border-primary/50"></div>
+<div class="flex flex-col md:flex-row md:items-start gap-2 md:gap-6">
+<div class="w-24 shrink-0 pt-3">
+<span class="font-label-sm text-label-sm text-outline">01:00 PM</span>
+</div>
+<div class="flex-1 glass-panel rounded-xl p-5 border-t border-l border-outline-variant/30 border-b border-r border-white/5 hover:border-outline-variant/60 transition-colors">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Team Sync</h3>
+<span class="material-symbols-outlined text-outline-variant" data-icon="groups">groups</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Weekly progress update and blocker resolution.</p>
+</div>
+</div>
+</div>
+<!-- Upcoming Item 2 -->
+<div class="relative mb-12 group transition-all">
+<!-- Timeline Node -->
+<div class="absolute -left-[28px] md:-left-[33px] top-4 w-[18px] h-[18px] rounded-full bg-surface-container border-2 border-outline-variant flex items-center justify-center z-10 transition-colors group-hover:border-primary/50"></div>
+<div class="flex flex-col md:flex-row md:items-start gap-2 md:gap-6">
+<div class="w-24 shrink-0 pt-3">
+<span class="font-label-sm text-label-sm text-outline">05:30 PM</span>
+</div>
+<div class="flex-1 glass-panel rounded-xl p-5 border-t border-l border-outline-variant/30 border-b border-r border-white/5 hover:border-outline-variant/60 transition-colors">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Workout</h3>
+<span class="material-symbols-outlined text-outline-variant" data-icon="fitness_center">fitness_center</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Upper body strength training.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Mobile Contextual Override/Global Bottom Right) -->
+<button class="fixed bottom-24 md:bottom-8 right-6 md:right-8 w-14 h-14 rounded-full bg-primary text-surface-container-lowest flex items-center justify-center shadow-[0_10px_25px_rgba(206,189,255,0.4)] hover:shadow-[0_15px_35px_rgba(206,189,255,0.6)] hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-[28px]" data-icon="add">add</span>
+</button>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full h-20 bg-surface/90 backdrop-blur-xl border-t border-primary/20 z-40 flex justify-around items-center px-2 pb-2 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+<a class="flex flex-col items-center justify-center w-16 h-16 text-on-surface-variant opacity-70" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-[10px] tracking-wider">Dash</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 h-16 text-primary" href="#">
+<div class="bg-primary/20 p-1.5 rounded-full mb-1">
+<span class="material-symbols-outlined filled" data-icon="timer">timer</span>
+</div>
+<span class="font-label-sm text-[10px] tracking-wider font-bold">Focus</span>
+</a>
+<!-- Spacer for FAB if needed center, but keeping 4 tabs simple -->
+<a class="flex flex-col items-center justify-center w-16 h-16 text-on-surface-variant opacity-70" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="military_tech">military_tech</span>
+<span class="font-label-sm text-[10px] tracking-wider">Quests</span>
+</a>
+<a class="flex flex-col items-center justify-center w-16 h-16 text-on-surface-variant opacity-70" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings">settings</span>
+<span class="font-label-sm text-[10px] tracking-wider">Settings</span>
+</a>
+</nav>
+</body></html>

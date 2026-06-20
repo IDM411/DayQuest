@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DayQuest Stats Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#af9e00",
+                        "outline": "#948e9d",
+                        "on-surface": "#e6e0ea",
+                        "tertiary-fixed": "#f8e454",
+                        "surface-variant": "#36343b",
+                        "surface-container-lowest": "#0f0d14",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e8ddff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary-fixed-dim": "#dbc839",
+                        "surface-container-high": "#2b2930",
+                        "secondary-container": "#3131c0",
+                        "primary-fixed-dim": "#cebdff",
+                        "on-surface-variant": "#cac4d4",
+                        "surface-container-low": "#1d1a21",
+                        "on-background": "#e6e0ea",
+                        "tertiary": "#dbc839",
+                        "on-tertiary-container": "#3b3500",
+                        "on-primary-container": "#3c1989",
+                        "surface-container": "#211e25",
+                        "secondary": "#c0c1ff",
+                        "on-primary-fixed": "#21005e",
+                        "primary": "#cebdff",
+                        "surface-container-highest": "#36343b",
+                        "on-tertiary": "#373100",
+                        "inverse-on-surface": "#322f37",
+                        "surface-bright": "#3b383f",
+                        "on-primary-fixed-variant": "#4f319c",
+                        "surface-dim": "#141219",
+                        "on-secondary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#494552",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#cebdff",
+                        "inverse-surface": "#e6e0ea",
+                        "on-tertiary-fixed-variant": "#504700",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#07006c",
+                        "on-primary": "#381385",
+                        "surface": "#141219",
+                        "primary-container": "#a78bfa",
+                        "on-secondary-container": "#b0b2ff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#674bb5",
+                        "background": "#141219"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "unit": "4px",
+                        "tile-gap": "16px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Manrope"],
+                        "headline-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #0d0b14; }
+        .glass-panel {
+            background-color: rgba(26, 22, 37, 0.4);
+            backdrop-filter: blur(40px);
+            border-top: 2px solid;
+            border-left: 2px solid;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            border-right: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(206, 189, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="text-on-surface font-body-md min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar (Desktop) -->
+<nav class="hidden md:flex flex-col py-margin gap-tile-gap bg-surface-container-low dark:bg-surface-container-low text-primary dark:text-primary font-label-sm text-label-sm uppercase tracking-widest fixed left-0 top-0 h-full w-64 z-40 border-r border-outline-variant/10 bg-surface/80 backdrop-blur-md shadow-2xl">
+<div class="px-4 py-6 flex flex-col items-center gap-4 border-b border-outline-variant/10">
+<div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30 relative group cursor-pointer">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="A small, stylized avatar portrait of a glowing, ethereal celestial mascot with subtle amber eyes and translucent horns, set against a dark nebula background. Corporate modern UI styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAb4jqv5P7ljLx2IQUwPvT7hhhDDsz7Z0xu5dOlIp7BVZwYb1ZpCaherMQHdKBoMg1_M4tJDMXWcLeGqWiW0qlg3A7tns1K1_4XGw3P2REUqVVDDOm6Dwxa2XRcv0N5wT1LKZQ3JbVKuRaYMz-eURbOiF3O4axGhmYRFvzNdkg0IBGO_8rV9KbRXWhYkX5xOZhZB85VhvjUKWMITw6cgLrXe5syGqNtGIAMV857selU0RcPTsqiG13Ygw-Ojmo0iCl_LIUhVm_0m0"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+</div>
+<div class="text-center">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Level 24</h2>
+<p class="text-on-surface-variant font-label-sm opacity-70">Stargazer</p>
+</div>
+<button class="w-full mt-2 py-3 rounded-lg bg-gradient-to-br from-primary to-primary-container text-on-primary font-body-md font-bold shadow-[0_10px_20px_rgba(206,189,255,0.2)] hover:shadow-[0_15px_30px_rgba(206,189,255,0.3)] transition-all hover:-translate-y-1">
+                Capture Task
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2">
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+                Dashboard
+            </a>
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">timer</span>
+                Focus
+            </a>
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">military_tech</span>
+                Quests
+            </a>
+<a class="text-primary bg-primary/10 rounded-xl font-bold flex items-center gap-unit px-4 py-3 border-l-2 border-primary hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+                Archive
+            </a>
+<a class="text-on-surface-variant flex items-center gap-unit px-4 py-3 opacity-60 hover:bg-surface-variant/30 hover:text-on-surface transition-all hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- TopNavBar (Mobile / Global Header Elements) -->
+<header class="md:hidden flex justify-between items-center h-20 px-margin w-full max-w-none fixed top-0 left-0 z-50 bg-surface/40 dark:bg-surface/40 backdrop-blur-xl border-b-2 border-t-2 border-l-2 border-primary/20 shadow-[0_20px_40px_rgba(0,0,0,0.6)] font-headline-md text-headline-md text-primary dark:text-primary">
+<div class="font-display-lg text-display-lg font-extrabold text-primary tracking-tight text-2xl">DayQuest</div>
+<div class="flex gap-4 items-center">
+<span class="material-symbols-outlined cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-300">local_fire_department</span>
+<span class="material-symbols-outlined cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-300">emoji_events</span>
+<span class="material-symbols-outlined cursor-pointer active:scale-95 transition-transform hover:text-primary transition-colors duration-300">notifications</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/30 ml-2">
+<img class="w-full h-full object-cover" data-alt="A tiny, stylized avatar portrait of a glowing, ethereal celestial mascot with subtle amber eyes, set against a dark nebula background. Corporate modern UI styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzza5Z2I9OUivbLvtWRlRY3NCR-H7sWVEkup3kbdYjtCyiB2dp968ognz0XcmsWYtSvu3m5cajRStoFuWajDaTXlDGnaBfn3Ipz5f6k43XKm0p1Z265zSwqC1JrLIbge9ZV_KwXGir-JiH7JmLu7fFZtq2SjswhpVRG9CbEMlD2fyFLs0kVfRB9GNxpaJHfr53wtayvp1Ua8_tn3xaZCHgNgrmyzspYqmStePoj3BblyARwZDeycMR-8yNf1-rnEilHJv7ayvzvuw"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 pt-24 md:pt-12 px-margin pb-32 md:pb-margin max-w-[1400px] mx-auto w-full">
+<header class="mb-10">
+<h1 class="font-display-lg text-display-lg text-white mb-2">Your Progress</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Analyze your journey and maintain your celestial momentum.</p>
+</header>
+<!-- 4 Summary Cards (Bento Grid Style) -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-tile-gap mb-tile-gap">
+<!-- Tasks Completed -->
+<div class="glass-panel rounded-xl p-4 border-secondary-container glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="absolute -right-8 -top-8 w-24 h-24 bg-secondary-container/20 rounded-full blur-2xl group-hover:bg-secondary-container/30 transition-colors"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Tasks Completed</h3>
+<span class="material-symbols-outlined text-secondary text-3xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-end justify-between relative z-10">
+<span class="font-display-lg text-4xl font-extrabold text-white">23</span>
+<span class="font-label-sm text-label-sm text-[#00c4b4] flex items-center bg-[#00c4b4]/10 px-2 py-1 rounded">
+<span class="material-symbols-outlined text-[14px] mr-1">arrow_upward</span> 4
+                    </span>
+</div>
+</div>
+<!-- Current Streak -->
+<div class="glass-panel rounded-xl p-4 border-tertiary glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="absolute -right-8 -top-8 w-24 h-24 bg-tertiary/20 rounded-full blur-2xl group-hover:bg-tertiary/30 transition-colors"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Current Streak</h3>
+<span class="material-symbols-outlined text-tertiary text-3xl" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div class="flex items-end justify-between relative z-10">
+<span class="font-display-lg text-4xl font-extrabold text-white flex items-center gap-2">6 <span class="text-2xl">🔥</span></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Best: 14</span>
+</div>
+</div>
+<!-- Total XP -->
+<div class="glass-panel rounded-xl p-4 border-primary glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="absolute -right-8 -top-8 w-24 h-24 bg-primary/20 rounded-full blur-2xl group-hover:bg-primary/30 transition-colors"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Total XP</h3>
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="flex items-end justify-between relative z-10">
+<span class="font-display-lg text-4xl font-extrabold text-white">4,280</span>
+<span class="font-label-sm text-label-sm text-primary bg-primary/10 px-2 py-1 rounded">Lv 24</span>
+</div>
+</div>
+<!-- Obligations -->
+<div class="glass-panel rounded-xl p-4 border-[#00c4b4] glow-hover transition-all duration-300 relative overflow-hidden group">
+<div class="absolute -right-8 -top-8 w-24 h-24 bg-[#00c4b4]/20 rounded-full blur-2xl group-hover:bg-[#00c4b4]/30 transition-colors"></div>
+<div class="flex justify-between items-start mb-6 relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Obligations</h3>
+<span class="material-symbols-outlined text-[#00c4b4] text-3xl" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<div class="flex items-end justify-between relative z-10">
+<span class="font-display-lg text-4xl font-extrabold text-white">87%</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">13/15</span>
+</div>
+</div>
+</div>
+<!-- Charts Section -->
+<div class="flex flex-col lg:flex-row gap-tile-gap mb-tile-gap">
+<!-- Weekly Bar Chart -->
+<div class="glass-panel rounded-xl p-6 border-outline-variant/30 lg:w-[60%] flex flex-col">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant tracking-widest mb-6">THIS WEEK</h3>
+<div class="flex-1 flex items-end justify-between gap-2 mt-auto h-48">
+<!-- Bars -->
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-sm transition-all duration-500 h-[30%] group-hover:bg-primary/40"></div>
+<span class="font-label-sm text-[10px] text-on-surface-variant">M</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-sm transition-all duration-500 h-[50%] group-hover:bg-primary/40"></div>
+<span class="font-label-sm text-[10px] text-on-surface-variant">T</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-sm transition-all duration-500 h-[40%] group-hover:bg-primary/40"></div>
+<span class="font-label-sm text-[10px] text-on-surface-variant">W</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group relative">
+<!-- Tallest/Brightest Bar -->
+<div class="absolute -top-6 text-primary font-label-sm opacity-0 group-hover:opacity-100 transition-opacity">12</div>
+<div class="w-full bg-primary rounded-t-sm transition-all duration-500 h-[90%] shadow-[0_0_15px_rgba(206,189,255,0.5)]"></div>
+<span class="font-label-sm text-[10px] text-primary font-bold">T</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-sm transition-all duration-500 h-[60%] group-hover:bg-primary/40"></div>
+<span class="font-label-sm text-[10px] text-on-surface-variant">F</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-sm transition-all duration-500 h-[20%] group-hover:bg-primary/40"></div>
+<span class="font-label-sm text-[10px] text-on-surface-variant">S</span>
+</div>
+<div class="w-full flex flex-col items-center gap-2 group">
+<div class="w-full bg-primary/20 rounded-t-sm transition-all duration-500 h-[10%] group-hover:bg-primary/40"></div>
+<span class="font-label-sm text-[10px] text-on-surface-variant">S</span>
+</div>
+</div>
+</div>
+<!-- Streak Line Graph -->
+<div class="glass-panel rounded-xl p-6 border-outline-variant/30 lg:w-[40%] flex flex-col relative overflow-hidden">
+<h3 class="font-label-sm text-label-sm text-on-surface-variant tracking-widest mb-6 relative z-10">STREAK HISTORY</h3>
+<!-- Abstract Representation of Line Graph -->
+<div class="flex-1 relative w-full h-48 mt-auto z-10">
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<!-- Gradient Fill under line -->
+<defs>
+<lineargradient id="streakGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#dbc839" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#dbc839" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<!-- Area -->
+<path d="M0,80 Q20,70 40,20 T70,90 T100,50 L100,100 L0,100 Z" fill="url(#streakGradient)"></path>
+<!-- Line -->
+<path class="drop-shadow-[0_0_8px_rgba(219,200,57,0.6)]" d="M0,80 Q20,70 40,20 T70,90 T100,50" fill="none" stroke="#dbc839" stroke-linecap="round" stroke-width="2"></path>
+<!-- Data Points -->
+<circle cx="40" cy="20" fill="#0f0d14" r="3" stroke="#dbc839" stroke-width="2"></circle>
+<text fill="#dbc839" font-family="Geist" font-size="6" text-anchor="middle" x="40" y="12">14</text>
+<circle cx="70" cy="90" fill="#0f0d14" r="2" stroke="#dbc839" stroke-width="1.5"></circle>
+</svg>
+</div>
+<!-- Decorative background glow -->
+<div class="absolute top-1/4 left-1/3 w-32 h-32 bg-tertiary/10 rounded-full blur-3xl z-0"></div>
+</div>
+</div>
+<!-- Goals & Obligations Sections -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-tile-gap">
+<!-- Goals Overview -->
+<div class="glass-panel rounded-xl p-6 border-outline-variant/30 flex flex-col gap-6">
+<h3 class="font-label-sm text-label-sm text-[#00c4b4] tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">flag</span>
+                    GOALS OVERVIEW
+                </h3>
+<!-- Goal Row 1 -->
+<div class="flex flex-col gap-2 group">
+<div class="flex justify-between items-end">
+<span class="font-headline-sm text-[16px] text-white group-hover:text-[#00c4b4] transition-colors">Master React Native</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Est. Oct 12</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#00c4b4] w-[65%] shadow-[0_0_10px_rgba(0,196,180,0.5)]"></div>
+</div>
+<div class="flex justify-between items-center mt-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant">65% Completed</span>
+<span class="font-label-sm text-[10px] px-2 py-0.5 rounded-full bg-[#00c4b4]/10 text-[#00c4b4]">On Pace</span>
+</div>
+</div>
+<!-- Goal Row 2 -->
+<div class="flex flex-col gap-2 group">
+<div class="flex justify-between items-end">
+<span class="font-headline-sm text-[16px] text-white group-hover:text-[#00c4b4] transition-colors">Read 12 Books</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Est. Dec 31</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[40%] shadow-[0_0_10px_rgba(192,193,255,0.5)]"></div>
+</div>
+<div class="flex justify-between items-center mt-1">
+<span class="font-label-sm text-[10px] text-on-surface-variant">40% Completed</span>
+<span class="font-label-sm text-[10px] px-2 py-0.5 rounded-full bg-secondary/10 text-secondary">Slightly Behind</span>
+</div>
+</div>
+</div>
+<!-- Obligations Summary -->
+<div class="glass-panel rounded-xl p-6 border-outline-variant/30 flex flex-col justify-between">
+<h3 class="font-label-sm text-label-sm text-tertiary tracking-widest flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-[16px]">assignment_turned_in</span>
+                    OBLIGATIONS SUMMARY
+                </h3>
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between text-on-surface-variant font-body-md bg-surface-container-high/50 p-4 rounded-lg border border-outline-variant/20">
+<div class="flex flex-col items-center gap-1">
+<span class="text-2xl font-bold text-white">13</span>
+<span class="font-label-sm text-[10px] uppercase text-primary">Completed</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/50"></div>
+<div class="flex flex-col items-center gap-1">
+<span class="text-2xl font-bold text-white">2</span>
+<span class="font-label-sm text-[10px] uppercase text-tertiary">In Progress</span>
+</div>
+<div class="w-px h-8 bg-outline-variant/50"></div>
+<div class="flex flex-col items-center gap-1">
+<span class="text-2xl font-bold text-white">0</span>
+<span class="font-label-sm text-[10px] uppercase text-error">Missed</span>
+</div>
+</div>
+<!-- Segmented Bar -->
+<div class="w-full h-3 flex rounded-full overflow-hidden gap-1 bg-surface-container-high">
+<div class="h-full bg-primary w-[86%] shadow-[0_0_10px_rgba(206,189,255,0.4)]"></div>
+<div class="h-full bg-tertiary w-[14%] shadow-[0_0_10px_rgba(219,200,57,0.4)]"></div>
+<!-- 0% Missed, so no red segment -->
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-margin right-margin w-14 h-14 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(206,189,255,0.4)] hover:shadow-[0_15px_35px_rgba(206,189,255,0.6)] hover:scale-105 transition-all duration-300 z-50 group">
+<span class="material-symbols-outlined text-on-primary text-3xl group-hover:rotate-90 transition-transform duration-300">add</span>
+</button>
+</body></html>

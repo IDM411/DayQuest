@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DayQuest - Deep Focus Flow</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@500&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#af9e00",
+                        "outline": "#948e9d",
+                        "on-surface": "#e6e0ea",
+                        "tertiary-fixed": "#f8e454",
+                        "surface-variant": "#36343b",
+                        "surface-container-lowest": "#0f0d14",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e8ddff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary-fixed-dim": "#dbc839",
+                        "surface-container-high": "#2b2930",
+                        "secondary-container": "#3131c0",
+                        "primary-fixed-dim": "#cebdff",
+                        "on-surface-variant": "#cac4d4",
+                        "surface-container-low": "#1d1a21",
+                        "on-background": "#e6e0ea",
+                        "tertiary": "#dbc839",
+                        "on-tertiary-container": "#3b3500",
+                        "on-primary-container": "#3c1989",
+                        "surface-container": "#211e25",
+                        "secondary": "#c0c1ff",
+                        "on-primary-fixed": "#21005e",
+                        "primary": "#cebdff",
+                        "surface-container-highest": "#36343b",
+                        "on-tertiary": "#373100",
+                        "inverse-on-surface": "#322f37",
+                        "surface-bright": "#3b383f",
+                        "on-primary-fixed-variant": "#4f319c",
+                        "surface-dim": "#141219",
+                        "on-secondary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#494552",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#cebdff",
+                        "inverse-surface": "#e6e0ea",
+                        "on-tertiary-fixed-variant": "#504700",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#07006c",
+                        "on-primary": "#381385",
+                        "surface": "#141219",
+                        "primary-container": "#a78bfa",
+                        "on-secondary-container": "#b0b2ff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#674bb5",
+                        "background": "#141219"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "unit": "4px",
+                        "tile-gap": "16px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Manrope"],
+                        "headline-md": ["Manrope"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-gradient-radial {
+            background: radial-gradient(circle, var(--tw-gradient-from) 0%, var(--tw-gradient-to) 100%);
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        .animate-breathe {
+            animation: breathe 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface h-screen w-screen overflow-hidden flex flex-col font-body-md relative">
+<!-- Ambient Radial Glow -->
+<div class="absolute inset-0 pointer-events-none z-0 flex items-center justify-center">
+<div class="w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px]"></div>
+</div>
+<!-- TopNavBar (Intentional Navigation Shell - Focus Mode Overlay) -->
+<nav class="flex justify-between items-center h-20 px-margin w-full max-w-none border-b-2 border-t-2 border-l-2 border-primary/20 bg-surface/40 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.6)] z-50 fixed top-0 left-0 w-full">
+<!-- Brand & Level -->
+<div class="flex items-center gap-4">
+<div class="font-display-lg text-display-lg font-extrabold text-primary tracking-tight text-3xl">DayQuest</div>
+<div class="hidden md:flex items-center gap-2 px-3 py-1 bg-surface-variant/50 rounded-full border border-outline-variant/30">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A small, stylized avatar of a celestial mascot with glowing amber eyes and translucent horns, rendered in a dark indigo, high-end digital art style with soft glowing atmospheric effects." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRlJ1A606q52tL1Q_KevkAk3iKBruUzYryG5xHRlyvVAK5KS9MWC79jrDQB2LNr_ZsV8YCDvMZClL60BmQ7XN_T2hoYO1TDIIR6wvUiUF8mf4gbtkV6Gmp4oQBb-i779TXW2IkoNofu0QVbYDBmb1H_YHV5jo-d_1rAxZcvuS3dGi0OxfiuH0B3_-pFfRtqEHMyg6dFiVLm4Cgc0T4FPxxvJewMpNNETlFrJJuh5Z9CM8hHVUI1wopg3SWWxzjJOmnanJAgezB0wI"/>
+<span class="font-label-sm text-label-sm text-primary">LVL 24</span>
+</div>
+</div>
+<!-- Center Date/Time (Desktop only for focus) -->
+<div class="hidden md:flex font-headline-sm text-headline-sm text-on-surface opacity-80">
+            Oct 24, 11:42 PM
+        </div>
+<!-- Trailing Icons -->
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-primary dark:text-primary cursor-pointer active:scale-95 transition-transform hover:text-on-surface duration-300" data-icon="local_fire_department">local_fire_department</span>
+<span class="material-symbols-outlined text-primary dark:text-primary cursor-pointer active:scale-95 transition-transform hover:text-on-surface duration-300" data-icon="emoji_events">emoji_events</span>
+<span class="material-symbols-outlined text-primary dark:text-primary cursor-pointer active:scale-95 transition-transform hover:text-on-surface duration-300" data-icon="notifications">notifications</span>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center relative z-10 pt-20 pb-10 px-margin">
+<!-- Corner Stats -->
+<div class="absolute top-28 left-margin font-label-sm text-label-sm text-tertiary tracking-widest uppercase">4 Day Streak</div>
+<div class="absolute top-28 right-margin font-label-sm text-label-sm text-primary tracking-widest uppercase md:hidden">LVL 24</div>
+<!-- Focus Info -->
+<div class="text-center mb-8 flex flex-col items-center gap-2">
+<div class="font-label-sm text-label-sm text-primary uppercase tracking-widest opacity-80">Current Focus</div>
+<h1 class="font-headline-md text-headline-md text-on-surface text-[32px] leading-tight">Draft Chapter 3 outline</h1>
+<div class="font-body-md text-secondary opacity-90 mt-1">Writing Sprint</div>
+</div>
+<!-- Mascot Display -->
+<div class="relative w-[200px] h-[200px] mb-8 flex items-center justify-center">
+<!-- Aura glow behind mascot -->
+<div class="absolute inset-0 bg-primary/20 blur-3xl rounded-full"></div>
+<img alt="Focus Spirit Mascot" class="w-full h-full object-contain animate-breathe drop-shadow-[0_0_30px_rgba(206,189,255,0.4)]" src="https://lh3.googleusercontent.com/aida/AP1WRLtpE8ePAQid8dBuVQp6hqm8F7tUrQyy68TDRj5olFx71GdfkhlODNofGjQRYHAIbEZ9v9eiraxoHrfKt3yt0mwlZWc9KjCUJPmdwATMyyPDOJLHdLGr4TTe-WSfnWMSnQhSxAuSDm8zocm2xp60zg_ya6KqiYk8xUAfUIem3w_djxbGZyqbmQuKM3jXkuFDxtjxTZoGpO2nZxudstZ6WQPuQSRjNxAhdAaVUZqbETm3Z9zvGOhOE9sZ5UU"/>
+</div>
+<!-- Timer -->
+<div class="font-display-lg text-display-lg text-on-surface tracking-tighter mb-10 text-[64px] font-bold drop-shadow-lg">
+            37:28
+        </div>
+<!-- Controls -->
+<div class="flex items-center gap-6">
+<button class="px-8 py-3 rounded-full border border-outline text-on-surface font-body-md hover:bg-surface-variant/30 transition-all duration-300 flex items-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-[20px]" data-icon="pause">pause</span>
+                Pause
+            </button>
+<button class="px-8 py-3 rounded-full bg-gradient-to-br from-primary to-primary-container text-on-primary font-body-md font-bold shadow-[0_10px_20px_rgba(206,189,255,0.2)] hover:shadow-[0_10px_25px_rgba(206,189,255,0.4)] transition-all duration-300 flex items-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-[20px]" data-icon="check">check</span>
+                Done
+            </button>
+</div>
+<!-- Bottom Footer Text -->
+<div class="absolute bottom-10 font-label-sm text-label-sm text-primary/60 uppercase tracking-widest">
+            Deep Work In Progress
+        </div>
+</main>
+</body></html>
