@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 *.db
 .venv/
+
+# Local Claude Code tooling / settings (machine-specific)
+.claude/
