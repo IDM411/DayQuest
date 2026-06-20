@@ -25,17 +25,24 @@ re-implement it:
   `background`, `scripts`.
 - **`app/templates/index.html`** — the migrated home screen; reference implementation
   for how a screen extends `base.html` (provides only `content` + `scripts`).
+- **`app/templates/obligations.html`** + **`app/static/obligations.js`** — migrated
+  Obligations Vault (route `/obligations`). Reference implementation for a **sub-page**:
+  `topbar` override (back-arrow + title), suppressed `fab`, live list from
+  `/api/obligations` sorted by urgency, inline capture wired to `/api/capture`.
+  Linked from the home OBLIGATIONS tile.
 
 A new screen = `{% extends "base.html" %}` + a `content` block + endpoint wiring.
 
-## Backlog (6 unmigrated reference screens)
+## Backlog (5 remaining reference screens)
+
+> ✅ **Migrated:** `obligations.html` → `app/templates/obligations.html` (done).
 
 Ordered by **ascending backend effort** — wire-able-now screens first, because they
 are cheapest to land on `base.html` and prove the foundation before the harder ones.
 
 | # | Screen (`design-reference/…`) | Backend readiness | What it needs |
 |---|---|---|---|
-| 1 | `obligations.html` | ✅ Fully live | `/api/obligations` (GET+POST) and `/api/capture` all exist. Best first real migration — exercises `base.html` + a `topbar` override + capture wiring. Replace the 3 hardcoded cards + "Completed" item with live data; wire the capture input to `/api/capture`. |
+| ~~1~~ | ~~`obligations.html`~~ | ✅ **MIGRATED** | Done — `/obligations`, see `app/templates/obligations.html` + `app/static/obligations.js`. |
 | 2 | `calendar.html` | ✅ Live (commitments) | `/api/commitments` maps directly onto the week grid (`day_of_week` → column, `start_time`/`end_time` → position/height, `title` → label). Later: overlay `ScheduledBlock` data (needs a list-by-range endpoint) and week navigation. Grid is currently fixed Mon–Sun / 8 AM–8 PM. |
 | 3 | `today's_path.html` | 🟡 Small backend add | Data exists in `ScheduledBlock` + the scheduler, but there's no "list today's blocks" GET endpoint. Add one, then wire the timeline (completed / active-NOW / upcoming items). |
 | 4 | `archive_vault.html` | 🟡 Medium backend add | `Goal.status` includes `done`/`abandoned` and `Obligation.status` includes `done`, so the Completed/Abandoned sections are partially reachable by filtering existing endpoints. **Missing:** completion/abandonment **timestamp** columns (the per-card dates can't bind) and a **reason/note** field (abandonment notes are unbacked). Ideally add a dedicated archive feed endpoint. |

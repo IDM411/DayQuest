@@ -65,15 +65,15 @@
 <div class="font-label-sm text-label-sm text-secondary truncate">Coming soon</div>
 </div>
 </div>
-<!-- OBLIGATIONS Tile (populated from /api/obligations) -->
-<div class="tile min-h-[160px]" style="--tile-color: var(--color-tertiary); --tile-color-glow: rgba(219, 200, 57, 0.25);">
+<!-- OBLIGATIONS Tile (populated from /api/obligations; links to the vault page) -->
+<a href="{{ url_for('views.obligations') }}" class="tile min-h-[160px] cursor-pointer" style="--tile-color: var(--color-tertiary); --tile-color-glow: rgba(219, 200, 57, 0.25);">
 <span class="material-symbols-outlined tile-icon">warning</span>
 <h3 class="font-headline-sm text-headline-sm text-on-surface">OBLIGATIONS</h3>
 <div class="mt-auto pt-4">
 <div id="obl-summary" class="font-body-md text-body-md text-on-surface-variant mb-1">Loading…</div>
 <div id="obl-next" class="font-label-sm text-label-sm text-tertiary truncate"></div>
 </div>
-</div>
+</a>
 <!-- GOALS Tile (populated from /api/goals) -->
 <div class="tile min-h-[160px]" style="--tile-color: #2dd4bf; --tile-color-glow: rgba(45, 212, 191, 0.15);">
 <span class="material-symbols-outlined tile-icon">flag</span>
