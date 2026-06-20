@@ -3,7 +3,7 @@ from datetime import datetime, time, timedelta
 import pytest
 
 from app import scheduler
-from app.models import ScheduledBlock
+from app.models import ScheduledBlock, db
 
 from .helpers import assert_no_overlaps, total_minutes
 
@@ -211,3 +211,44 @@ def test_concurrent_pushes_without_intervening_rerun_stay_consistent(app, make_o
 
     pushed_ids = {b.id for b in final_blocks if b.status == "pushed"}
     assert pushed_ids == {block_a.id, block_b.id}
+
+
+# ---------------------------------------------------------------------------
+# 4. Floating-point gap-fill runaway (regression: infinite loop / OOM)
+# ---------------------------------------------------------------------------
+
+def test_gap_fill_does_not_spin_on_floating_point_remainder(
+    app, make_obligation, make_goal, make_fixed_commitment
+):
+    """Repeated effort subtraction can leave a goal's remaining effort as a
+    sub-resolution float residue (~2.8e-14 min). That residue used to stay a
+    scheduling candidate, and timedelta(minutes=residue) rounds to 0, so the
+    gap-fill cursor never advanced - an infinite loop that exhausted memory
+    (~22GB) while appending zero-length blocks.
+
+    The trigger depends on microsecond alignment between `now` and the stored
+    targets, so we sweep a range of offsets. On the unfixed scheduler several of
+    these (e.g. +14us) hang outright.
+    """
+    base = datetime(2026, 6, 19, 14, 0, 0)
+    make_obligation("Overdue", deadline=base - timedelta(hours=6), effort_minutes=90)
+    make_obligation("Lab report", deadline=base + timedelta(days=2), effort_minutes=60)
+    make_goal("Thesis", soft_target_date=base + timedelta(days=14),
+              total_effort_minutes=600, time_logged=450)
+    make_goal("10k", soft_target_date=base + timedelta(days=10),
+              total_effort_minutes=1200, time_logged=120)
+    make_fixed_commitment("Gym", start_time=time(17, 0), end_time=time(18, 0),
+                          day_of_week=0, recurring=True)
+    make_fixed_commitment("Lecture", start_time=time(11, 0), end_time=time(12, 30),
+                          day_of_week=1, recurring=True)
+
+    for microsecond in range(0, 40):
+        now = base + timedelta(microseconds=microsecond)
+        blocks = scheduler.run_scheduler(now=now)
+        # Every block must occupy real time. A zero/negative-length block is the
+        # symptom of the spin; reaching this assertion at all proves termination.
+        assert all(b.end_time > b.start_time for b in blocks), f"zero-length block at +{microsecond}us"
+        # Stays bounded - the runaway produced an unbounded list.
+        assert len(blocks) < 500
+        ScheduledBlock.query.delete(synchronize_session=False)
+        db.session.commit()

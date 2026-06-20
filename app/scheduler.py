@@ -9,6 +9,12 @@ HORIZON_DAYS = 14
 MIN_BLOCK_MINUTES = 15
 DEFAULT_PUSH_MINUTES = 30
 
+# Remaining effort below this is floating-point residue from repeated subtraction
+# (e.g. 2.8e-14 minutes), not real work. Scheduling such a remainder produces a
+# zero-length block whose end == start, so the gap-fill cursor never advances and
+# the loop spins forever. Anything under ~60µs of effort is treated as finished.
+EFFORT_EPSILON_MINUTES = 1e-6
+
 # Schedulable work (obligations + goals) shares one urgency formula and one
 # gap-filling loop. "ref_type" is the discriminator the rest of the system
 # already uses on ScheduledBlock.
@@ -201,7 +207,7 @@ def _fill_gaps(gaps, reserved):
         while cursor < gap_end:
             candidates = [
                 key for key, mins in remaining.items()
-                if mins > 0 and _target_datetime(items[key]) > cursor
+                if mins > EFFORT_EPSILON_MINUTES and _target_datetime(items[key]) > cursor
             ]
             if not candidates:
                 break
@@ -220,6 +226,13 @@ def _fill_gaps(gaps, reserved):
                 break
 
             block_end = min(cursor + timedelta(minutes=slot_minutes), _target_datetime(chosen))
+            # Defensive: if the slot rounds to nothing (sub-resolution remainder),
+            # the block would have end == start and the cursor would never advance.
+            # Drop the item and move on so the loop can never spin. The candidate
+            # filter above already excludes residues, so this is belt-and-suspenders.
+            if block_end <= cursor:
+                remaining[chosen_key] = 0
+                continue
             new_blocks.append(ScheduledBlock(
                 ref_type=ref_type,
                 ref_id=ref_id,
