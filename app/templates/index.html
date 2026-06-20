@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DayQuest Sanctuary</title>
+<!-- Tailwind (Play CDN) with the exact Nocturne Sanctuary tokens from DESIGN.md -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Typography: Manrope (headlines), Hanken Grotesk (body), Geist (labels) per DESIGN.md -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#af9e00",
+                        "outline": "#948e9d",
+                        "on-surface": "#e6e0ea",
+                        "tertiary-fixed": "#f8e454",
+                        "surface-variant": "#36343b",
+                        "surface-container-lowest": "#0f0d14",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e8ddff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary-fixed-dim": "#dbc839",
+                        "surface-container-high": "#2b2930",
+                        "secondary-container": "#3131c0",
+                        "primary-fixed-dim": "#cebdff",
+                        "on-surface-variant": "#cac4d4",
+                        "surface-container-low": "#1d1a21",
+                        "on-background": "#e6e0ea",
+                        "tertiary": "#dbc839",
+                        "on-tertiary-container": "#3b3500",
+                        "on-primary-container": "#3c1989",
+                        "surface-container": "#211e25",
+                        "secondary": "#c0c1ff",
+                        "on-primary-fixed": "#21005e",
+                        "primary": "#cebdff",
+                        "surface-container-highest": "#36343b",
+                        "on-tertiary": "#373100",
+                        "inverse-on-surface": "#322f37",
+                        "surface-bright": "#3b383f",
+                        "on-primary-fixed-variant": "#4f319c",
+                        "surface-dim": "#141219",
+                        "on-secondary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#494552",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#cebdff",
+                        "inverse-surface": "#e6e0ea",
+                        "on-tertiary-fixed-variant": "#504700",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#07006c",
+                        "on-primary": "#381385",
+                        "surface": "#141219",
+                        "primary-container": "#a78bfa",
+                        "on-secondary-container": "#b0b2ff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#674bb5",
+                        "background": "#141219"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "20px",
+                        "unit": "4px",
+                        "tile-gap": "16px",
+                        "margin": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Manrope", "sans-serif"],
+                        "body-lg": ["Hanken Grotesk", "sans-serif"],
+                        "label-sm": ["Geist", "sans-serif"],
+                        "body-md": ["Hanken Grotesk", "sans-serif"],
+                        "display-lg": ["Manrope", "sans-serif"],
+                        "headline-md": ["Manrope", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #0d0b14; color: #e6e0ea; }
+        .glass-panel {
+            background-color: rgba(26, 22, 37, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+        .tile {
+            position: relative;
+            background-color: rgba(26, 22, 37, 0.4);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border-radius: 1rem;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-top: 2px solid var(--tile-color, #cebdff);
+            border-left: 2px solid var(--tile-color, #cebdff);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            border-radius: inherit;
+            pointer-events: none;
+            box-sizing: border-box;
+        }
+        .tile:hover {
+            box-shadow: 0 0 30px var(--tile-color-glow, rgba(206, 189, 255, 0.2));
+            transform: translateY(-2px);
+        }
+        .tile-icon {
+            position: absolute;
+            top: 16px; right: 16px;
+            font-size: 32px;
+            color: var(--tile-color, #cebdff);
+            opacity: 0.8;
+        }
+        .mascot-float {
+            animation: breathe 4s infinite ease-in-out;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.02) translateY(-4px); }
+        }
+        .gradient-btn {
+            background: linear-gradient(135deg, #cebdff, #a78bfa);
+            color: #21005e;
+            box-shadow: 0 8px 16px rgba(167, 139, 250, 0.3);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex">
+<div class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar (text nav links removed — the tile grid is the only navigation) -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/40 backdrop-blur-xl border-b-2 border-t-2 border-l-2 border-primary/20 shadow-[0_20px_40px_rgba(0,0,0,0.6)] flex justify-between items-center h-20 px-margin w-full max-w-none">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-display-lg font-extrabold text-primary tracking-tight">DayQuest</span>
+<div class="h-10 w-10 rounded-full overflow-hidden border border-primary/30 flex items-center justify-center bg-surface-container">
+<img alt="Celestial Mascot Avatar" class="w-full h-full object-cover" src="{{ url_for('static', filename='img/mascot-avatar.png') }}"/>
+</div>
+<div class="flex flex-col ml-2 hidden md:flex">
+<span class="font-label-sm text-label-sm text-on-surface">Lv 24 Paladin</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Tuesday, 10:42 PM</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 text-tertiary cursor-pointer hover:bg-surface-variant/50 p-2 rounded-full transition-colors duration-300">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-label-sm text-label-sm">6</span>
+</div>
+<button class="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors duration-300">
+<span class="material-symbols-outlined">emoji_events</span>
+</button>
+<button class="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors duration-300 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 pt-32 pb-24 px-4 md:px-12 max-w-7xl mx-auto w-full relative">
+<!-- Right Now Card -->
+<div class="w-full md:w-[80%] mx-auto mb-12 relative">
+<div class="glass-panel rounded-2xl p-8 md:p-12 relative overflow-hidden">
+<!-- Placeholder ghost mascot (pure SVG, no image file). TEMPORARY: replaces the old
+     mascot-hero.png, which shipped with a baked-in white background. Swap this out for a
+     real transparent mascot asset when one is available. -->
+<svg viewBox="0 0 64 72" class="absolute -top-4 -right-4 w-[90px] h-[90px] mascot-float opacity-90 z-10" style="filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.4));" aria-hidden="true" role="img">
+<defs>
+<linearGradient id="ghost-grad" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#cebdff"/>
+<stop offset="100%" stop-color="#a78bfa"/>
+</linearGradient>
+</defs>
+<!-- Rounded dome top, straight sides, classic scalloped (wavy) bottom -->
+<path d="M10,36 a22,24 0 0 1 44,0 L54,58 a5.5,5 0 0 1 -11,0 a5.5,5 0 0 1 -11,0 a5.5,5 0 0 1 -11,0 a5.5,5 0 0 1 -11,0 Z" fill="url(#ghost-grad)"/>
+<ellipse cx="26" cy="34" rx="3" ry="4" fill="#381385"/>
+<ellipse cx="38" cy="34" rx="3" ry="4" fill="#381385"/>
+</svg>
+<div class="relative z-20">
+<span class="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary font-label-sm text-label-sm uppercase tracking-widest mb-4">Right Now</span>
+<!-- Populated from /api/schedule/right-now -->
+<div id="rn-content" hidden>
+<h2 id="rn-title" class="text-[28px] leading-[36px] font-bold text-on-surface mb-2 font-headline-md">&nbsp;</h2>
+<p id="rn-first-step" class="font-body-lg text-body-lg text-on-surface-variant mb-8"></p>
+<div class="flex gap-4">
+<button id="done-btn" class="gradient-btn px-6 py-2 rounded-full font-label-sm text-label-sm uppercase tracking-wider font-bold transition hover:scale-105 active:scale-95">Done</button>
+<button id="push-btn" class="px-6 py-2 rounded-full font-label-sm text-label-sm uppercase tracking-wider font-bold border border-primary text-primary hover:bg-primary/10 transition active:scale-95">Push</button>
+</div>
+</div>
+<!-- Empty state when nothing is scheduled -->
+<div id="rn-empty" hidden>
+<h2 class="text-[28px] leading-[36px] font-bold text-on-surface mb-2 font-headline-md">All clear</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Nothing scheduled right now. Enjoy the quiet.</p>
+</div>
+<!-- Error state -->
+<p id="rn-error" hidden class="font-body-md text-body-md text-error"></p>
+</div>
+</div>
+<!-- XP Bar Section Below Card (static placeholder — no gamification backend yet) -->
+<div class="mt-6 flex flex-col gap-2 px-4">
+<div class="flex justify-between items-center font-label-sm text-label-sm">
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span>Day 6 Streak</span>
+</div>
+<span class="text-primary font-bold">Lv. 24 Paladin</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden relative">
+<div class="h-full bg-primary rounded-full w-[60%] shadow-[0_0_10px_rgba(206,189,255,0.5)]"></div>
+</div>
+</div>
+</div>
+<!-- 6-Tile Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-tile-gap w-full">
+<!-- TODAY Tile (static placeholder — no schedule-list endpoint yet) -->
+<div class="tile min-h-[160px]" style="--tile-color: var(--color-secondary); --tile-color-glow: rgba(192, 193, 255, 0.15);">
+<span class="material-symbols-outlined tile-icon">calendar_today</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">TODAY</h3>
+<div class="mt-auto pt-4">
+<div class="font-body-md text-body-md text-on-surface-variant mb-1">Your day at a glance</div>
+<div class="font-label-sm text-label-sm text-secondary truncate">Coming soon</div>
+</div>
+</div>
+<!-- OBLIGATIONS Tile (populated from /api/obligations) -->
+<div class="tile min-h-[160px]" style="--tile-color: var(--color-tertiary); --tile-color-glow: rgba(219, 200, 57, 0.25);">
+<span class="material-symbols-outlined tile-icon">warning</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">OBLIGATIONS</h3>
+<div class="mt-auto pt-4">
+<div id="obl-summary" class="font-body-md text-body-md text-on-surface-variant mb-1">Loading…</div>
+<div id="obl-next" class="font-label-sm text-label-sm text-tertiary truncate"></div>
+</div>
+</div>
+<!-- GOALS Tile (populated from /api/goals) -->
+<div class="tile min-h-[160px]" style="--tile-color: #2dd4bf; --tile-color-glow: rgba(45, 212, 191, 0.15);">
+<span class="material-symbols-outlined tile-icon">flag</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">GOALS</h3>
+<div id="goals-list" class="mt-auto pt-4 flex flex-col gap-2">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Loading…</div>
+</div>
+</div>
+<!-- FOCUS Tile (static placeholder — no focus-session backend yet) -->
+<div class="tile min-h-[160px]" style="--tile-color: var(--color-primary); --tile-color-glow: rgba(206, 189, 255, 0.15);">
+<span class="material-symbols-outlined tile-icon">center_focus_strong</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">FOCUS</h3>
+<div class="mt-auto pt-4">
+<div class="font-body-md text-body-md text-primary mb-1">Start a focus session</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant truncate">Coming soon</div>
+</div>
+</div>
+<!-- CALENDAR Tile (populated from /api/commitments) -->
+<div class="tile min-h-[160px]" style="--tile-color: #fb7185; --tile-color-glow: rgba(251, 113, 133, 0.15);">
+<span class="material-symbols-outlined tile-icon">event_note</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">CALENDAR</h3>
+<div id="cal-list" class="mt-auto pt-4 flex flex-col gap-1">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Loading…</div>
+</div>
+</div>
+<!-- CAPTURE Tile (static launcher) -->
+<div class="tile min-h-[160px] cursor-pointer" style="--tile-color: var(--color-primary-container); --tile-color-glow: rgba(167, 139, 250, 0.2);">
+<span class="material-symbols-outlined tile-icon">add_circle</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">CAPTURE</h3>
+<div class="mt-auto pt-4 flex flex-col items-center justify-center">
+<div class="font-body-md text-body-md text-primary-container mb-1">Got something new?</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Tap to capture</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full gradient-btn flex items-center justify-center hover:scale-110 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined text-on-primary-fixed font-bold text-2xl">add</span>
+</button>
+</div>
+<!-- Background Ambient Glows -->
+<div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-secondary-container/10 blur-[150px]"></div>
+</div>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
