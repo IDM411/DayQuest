@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DayQuest Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&amp;family=Hanken+Grotesk:wght@400;700&amp;family=Geist:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#af9e00",
+                        "outline": "#948e9d",
+                        "on-surface": "#e6e0ea",
+                        "tertiary-fixed": "#f8e454",
+                        "surface-variant": "#36343b",
+                        "surface-container-lowest": "#0f0d14",
+                        "on-tertiary-fixed": "#201c00",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "primary-fixed": "#e8ddff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary-fixed-dim": "#dbc839",
+                        "surface-container-high": "#2b2930",
+                        "secondary-container": "#3131c0",
+                        "primary-fixed-dim": "#cebdff",
+                        "on-surface-variant": "#cac4d4",
+                        "surface-container-low": "#1d1a21",
+                        "on-background": "#e6e0ea",
+                        "tertiary": "#dbc839",
+                        "on-tertiary-container": "#3b3500",
+                        "on-primary-container": "#3c1989",
+                        "surface-container": "#211e25",
+                        "secondary": "#c0c1ff",
+                        "on-primary-fixed": "#21005e",
+                        "primary": "#cebdff",
+                        "surface-container-highest": "#36343b",
+                        "on-tertiary": "#373100",
+                        "inverse-on-surface": "#322f37",
+                        "surface-bright": "#3b383f",
+                        "on-primary-fixed-variant": "#4f319c",
+                        "surface-dim": "#141219",
+                        "on-secondary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "outline-variant": "#494552",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#cebdff",
+                        "inverse-surface": "#e6e0ea",
+                        "on-tertiary-fixed-variant": "#504700",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#07006c",
+                        "on-primary": "#381385",
+                        "surface": "#141219",
+                        "primary-container": "#a78bfa",
+                        "on-secondary-container": "#b0b2ff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#674bb5",
+                        "background": "#141219"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        gutter: "20px",
+                        unit: "4px",
+                        "tile-gap": "16px",
+                        margin: "24px"
+                    },
+                    fontFamily: {
+                        "headline-sm": ["Manrope"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "label-sm": ["Geist"],
+                        "body-md": ["Hanken Grotesk"],
+                        "display-lg": ["Manrope"],
+                        "headline-md": ["Manrope"]
+                    },
+                    fontSize: {
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "800" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "700" }]
+                    }
+                }
+            }
+        };
+    </script>
+<style>
+        body {
+            background-color: #0d0b14;
+        }
+        .time-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            grid-template-rows: repeat(13, 60px); /* 8AM to 8PM */
+        }
+        .event-card {
+            background: rgba(26, 22, 37, 0.4);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid;
+            border-left: 2px solid;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border-radius: 0.5rem;
+            padding: 8px;
+            font-family: 'Geist', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: #e6e0ea;
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- Top Bar -->
+<header class="flex items-center justify-between px-margin py-6 w-full z-10 relative">
+<button class="text-primary hover:bg-surface-variant/50 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-on-surface">October 2023 · Week 42</h1>
+<!-- Toggle -->
+<div class="flex bg-surface-container-high rounded-full p-1">
+<button class="font-label-sm text-label-sm px-4 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Day</button>
+<button class="font-label-sm text-label-sm px-4 py-1.5 rounded-full bg-primary/20 text-primary font-bold shadow-sm">Week</button>
+<button class="font-label-sm text-label-sm px-4 py-1.5 rounded-full text-on-surface-variant hover:text-on-surface transition-colors">Month</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 w-full px-margin pb-margin relative z-0 overflow-y-auto">
+<!-- Day Headers -->
+<div class="grid grid-cols-[60px_repeat(7,1fr)] mb-4 sticky top-0 bg-[#0d0b14]/90 backdrop-blur-md z-20 pb-2">
+<div></div> <!-- Time column header spacer -->
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase">Mon <br/> 23</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase">Tue <br/> 24</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase">Wed <br/> 25</div>
+<div class="text-center font-label-sm text-label-sm text-primary font-bold bg-primary/10 rounded-lg py-1 border-b-2 border-primary">Thu <br/> 26</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase">Fri <br/> 27</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase">Sat <br/> 28</div>
+<div class="text-center font-label-sm text-label-sm text-on-surface-variant uppercase">Sun <br/> 29</div>
+</div>
+<!-- Grid Container -->
+<div class="relative w-full border-t border-outline-variant/20 pt-4">
+<div class="time-grid">
+<!-- Time Labels -->
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">8 AM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">9 AM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">10 AM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">11 AM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">12 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">1 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">2 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">3 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">4 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">5 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">6 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">7 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+<div class="text-right pr-4 font-label-sm text-label-sm text-on-surface-variant relative top-[-8px]">8 PM</div>
+<div class="col-span-7 border-t border-outline-variant/10"></div>
+</div>
+<!-- Absolute Positioned Events -->
+<!-- Columns: Mon(1), Tue(2), Wed(3), Thu(4), Fri(5), Sat(6), Sun(7) + 60px offset -->
+<!-- Rows: 60px per hour starting at 8AM (row 0) -->
+<!-- Gym (M 8-10AM) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 0); top: 16px; width: calc((100% - 60px) / 7 - 8px); height: 112px; border-color: #3131c0; box-shadow: 0 4px 20px rgba(49, 49, 192, 0.2);">
+<div class="font-bold">Gym</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">8:00 - 10:00</div>
+</div>
+<!-- Gym (F 8-10AM) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 4); top: 16px; width: calc((100% - 60px) / 7 - 8px); height: 112px; border-color: #3131c0; box-shadow: 0 4px 20px rgba(49, 49, 192, 0.2);">
+<div class="font-bold">Gym</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">8:00 - 10:00</div>
+</div>
+<!-- CIS3360 (Tue 10:30-11:30) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 1); top: 166px; width: calc((100% - 60px) / 7 - 8px); height: 56px; border-color: #3131c0; box-shadow: 0 4px 20px rgba(49, 49, 192, 0.2);">
+<div class="font-bold">CIS3360</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">10:30 - 11:30</div>
+</div>
+<!-- Deep Work (Wed 9AM-12PM) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 2); top: 76px; width: calc((100% - 60px) / 7 - 8px); height: 176px; border-color: #cebdff; box-shadow: 0 4px 20px rgba(206, 189, 255, 0.2);">
+<div class="font-bold text-primary">Deep Work</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">9:00 - 12:00</div>
+</div>
+<!-- Team Sync (Thu 12-2PM) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 3); top: 256px; width: calc((100% - 60px) / 7 - 8px); height: 116px; border-color: #cebdff; box-shadow: 0 4px 20px rgba(206, 189, 255, 0.2);">
+<div class="font-bold text-primary">Team Sync</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">12:00 - 14:00</div>
+</div>
+<!-- Design Review (Thu 3-5PM) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 3); top: 436px; width: calc((100% - 60px) / 7 - 8px); height: 116px; border-color: #cebdff; box-shadow: 0 4px 20px rgba(206, 189, 255, 0.2);">
+<div class="font-bold text-primary">Design Review</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">15:00 - 17:00</div>
+</div>
+<!-- Mountain Hike (Sat 10AM-2PM) -->
+<div class="absolute event-card" style="left: calc(60px + (100% - 60px) / 7 * 5); top: 136px; width: calc((100% - 60px) / 7 - 8px); height: 236px; border-color: #dbc839; box-shadow: 0 4px 20px rgba(219, 200, 57, 0.2); background: linear-gradient(135deg, rgba(26, 22, 37, 0.6), rgba(219, 200, 57, 0.1));">
+<div class="font-bold text-tertiary">Mountain Hike</div>
+<div class="text-on-surface-variant opacity-80 text-[10px]">10:00 - 14:00</div>
+</div>
+<!-- Current Time Indicator (Thu ~1:30 PM) -->
+<div class="absolute w-full flex items-center pointer-events-none" style="top: 346px; left: 0;">
+<div class="w-[60px] text-right pr-2 text-primary font-bold text-xs">1:30</div>
+<div class="flex-1 h-[2px] bg-primary relative">
+<div class="absolute w-3 h-3 rounded-full bg-primary -left-1.5 -top-[5px] shadow-[0_0_10px_#cebdff]"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB -->
+<button class="fixed bottom-margin right-margin w-14 h-14 bg-gradient-to-br from-primary to-primary-container rounded-full shadow-[0_10px_25px_rgba(206,189,255,0.4)] flex items-center justify-center text-on-primary hover:scale-105 active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined" style="font-size: 28px;">add</span>
+</button>
+</body></html>
